@@ -1,0 +1,27 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  simulator:
+    build: ./payment-simulator
+    environment:
+      SERVER_PORT: 8081
+    ports: ["8081:8081"]
+  bff:
+    build: ./checkout-bff
+    environment:
+      SERVER_PORT: 8080
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PRODUCTS_BASE_URL: http://simulator:8081
+      PAYMENT_METHODS_BASE_URL: http://simulator:8081
+    ports: ["8080:8080"]
+    depends_on:
+      redis: { condition: service_healthy }
+      simulator: { condition: service_started }

@@ -1,0 +1,8 @@
+**/target/
+.m2repo/
+.mvn/wrapper/apache-maven-*/
+.mvn/wrapper/*.zip
+.mvn/wrapper/*.part
+tmp/
+.vscode/
+*.log
