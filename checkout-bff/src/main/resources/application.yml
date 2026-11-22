@@ -1,6 +1,9 @@
 server:
   port: ${SERVER_PORT:8080}
 spring:
+  kafka:
+    admin:
+      auto-create: false
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -8,3 +11,14 @@ spring:
 services:
   products-base-url: ${PRODUCTS_BASE_URL:http://localhost:8081}
   payment-methods-base-url: ${PAYMENT_METHODS_BASE_URL:http://localhost:8081}
+checkout:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    command-topic: ${CHECKOUT_KAFKA_COMMAND_TOPIC:checkout-v2-commands}
+    producer:
+      acks: all
+      enable-idempotence: true
+      linger-ms: 0
+      request-timeout-ms: 1500
+      delivery-timeout-ms: 2000
+      max-block-ms: 2000
