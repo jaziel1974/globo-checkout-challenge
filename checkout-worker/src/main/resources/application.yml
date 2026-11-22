@@ -1,0 +1,37 @@
+spring:
+  main:
+    web-application-type: none
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+        linger.ms: 0
+        request.timeout.ms: 1500
+        delivery.timeout.ms: 2000
+        max.block.ms: 2000
+    consumer:
+      group-id: ${CHECKOUT_KAFKA_CONSUMER_GROUP:checkout-v2-worker}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      max-poll-records: 1
+    listener:
+      ack-mode: manual
+    admin:
+      auto-create: false
+  data:
+    redis:
+      connect-timeout: ${CHECKOUT_REDIS_CONNECT_TIMEOUT:1s}
+      timeout: ${CHECKOUT_REDIS_COMMAND_TIMEOUT:2s}
+
+checkout:
+  kafka:
+    command-topic: ${CHECKOUT_KAFKA_COMMAND_TOPIC:checkout-v2-commands}
+    failure-topic: ${CHECKOUT_KAFKA_FAILURE_TOPIC:checkout-v2-failures}
+    recovery-interval-ms: 1000
+    lease-renewal-interval-ms: 10000
